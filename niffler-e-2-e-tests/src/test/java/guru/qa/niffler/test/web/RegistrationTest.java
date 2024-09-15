@@ -13,7 +13,7 @@ import static com.codeborne.selenide.Selenide.open;
 import static io.qameta.allure.Allure.step;
 
 @ExtendWith(BrowserExtension.class)
-public class RegistrationWebTest extends Pages {
+public class RegistrationTest extends Pages {
     Faker faker = new Faker();
     String login = faker.name().username();
     String password = faker.internet().password(3, 12);
