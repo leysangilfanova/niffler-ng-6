@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selenide.open;
 import static io.qameta.allure.Allure.step;
 
 @ExtendWith(BrowserExtension.class)
-public class LoginWebTest extends Pages {
+public class LoginTest extends Pages {
   String userData = "kisa";
 
   private static final Config CFG = Config.getInstance();
