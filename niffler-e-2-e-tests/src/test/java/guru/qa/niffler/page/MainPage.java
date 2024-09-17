@@ -17,6 +17,7 @@ public class MainPage {
     private final SelenideElement spendingsTable = $("[id='spendings'] [aria-labelledby='tableTitle']").as("таблица с тратами");
     private final SelenideElement userMenuBtn = $("[aria-label='Menu']").as("кнопка открытия меню");
     private final SelenideElement profileBtn = $(byText("Profile")).as("кнопка открытия профиля");
+    private final SelenideElement friendsBtn = $(byText("Friends")).as("кнопка открытия профиля");
     private final SelenideElement header = $("#root header");
     private final SelenideElement headerMenu = $("ul[role='menu']");
     private final SelenideElement statComponent = $("#stat");
@@ -50,22 +51,11 @@ public class MainPage {
         profileBtn.click();
     }
 
-    public FriendsPage friendsPage() {
-        header.$("button").click();
-        headerMenu.$$("li").find(text("Friends")).click();
+    @Step("Открыть вкладку 'Друзья'")
+    public FriendsPage openFriendsPage() {
+        userMenuBtn.click();
+        friendsBtn.click();
         return new FriendsPage();
-    }
-
-    public PeoplePage allPeoplesPage() {
-        header.$("button").click();
-        headerMenu.$$("li").find(text("All People")).click();
-        return new PeoplePage();
-    }
-
-    public MainPage checkThatPageLoaded() {
-        statComponent.should(visible).shouldHave(text("Statistics"));
-        spendingTable.should(visible).shouldHave(text("History of Spendings"));
-        return this;
     }
 }
 
