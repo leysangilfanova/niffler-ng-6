@@ -26,8 +26,9 @@ public class FriendsPage {
     }
 
     @Step("Проверка того, что у пользователя нет друзей")
-    public void noExistingFriendsCheck() {
+    public FriendsPage noExistingFriendsCheck() {
         friendsList.shouldHave(size(0));
+        return this;
     }
 
     @Step("Проверка того, что у пользователя есть заявка в друзья")
@@ -37,8 +38,8 @@ public class FriendsPage {
     }
 
     @Step("Кликнуть по кнопке 'AllPeople'")
-    public FriendsPage clickAllPeopleBtn() {
+    public PeoplePage clickAllPeopleBtn() {
         allPeopleBtn.click();
-        return this;
+        return new PeoplePage();
     }
 }
