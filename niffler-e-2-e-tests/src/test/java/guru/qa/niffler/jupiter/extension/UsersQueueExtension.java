@@ -55,7 +55,6 @@ public class UsersQueueExtension implements
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void beforeTestExecution(ExtensionContext context) {
         Arrays.stream(context.getRequiredTestMethod().getParameters())
@@ -65,12 +64,7 @@ public class UsersQueueExtension implements
                     Optional<StaticUser> user = Optional.empty();
                     StopWatch sw = StopWatch.createStarted();
                     while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
-                        user = switch (ut.value()) {
-                            case EMPTY -> Optional.ofNullable(EMPTY_USERS.poll());
-                            case WITH_FRIEND -> Optional.ofNullable(WITH_FRIEND_USERS.poll());
-                            case WITH_INCOME_REQUEST -> Optional.ofNullable(WITH_INCOME_REQUEST_USERS.poll());
-                            case WITH_OUTCOME_REQUEST -> Optional.ofNullable(WITH_OUTCOME_REQUEST_USERS.poll());
-                        };
+                        user = Optional.ofNullable(getUserQueue(ut.value()).poll());
                     }
                     Allure.getLifecycle().updateTestCase(testCase ->
                             testCase.setStart(new Date().getTime())
@@ -97,12 +91,7 @@ public class UsersQueueExtension implements
         );
         if (map != null) {
             for (Map.Entry<UserType, StaticUser> e : map.entrySet()) {
-                switch (e.getKey().value()) {
-                    case EMPTY -> EMPTY_USERS.add(e.getValue());
-                    case WITH_FRIEND -> WITH_FRIEND_USERS.add(e.getValue());
-                    case WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS.add(e.getValue());
-                    case WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS.add(e.getValue());
-                }
+                getUserQueue(e.getKey().value()).add(e.getValue());
             }
         }
     }
@@ -120,4 +109,14 @@ public class UsersQueueExtension implements
                         AnnotationSupport.findAnnotation(parameterContext.getParameter(), UserType.class).get()
                 );
     }
+
+    private Queue<StaticUser> getUserQueue(UserType.Type userType) {
+        return switch (userType) {
+            case EMPTY -> EMPTY_USERS;
+            case WITH_FRIEND -> WITH_FRIEND_USERS;
+            case WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS;
+            case WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS;
+        };
+    }
 }
+

@@ -36,7 +36,7 @@ public class FriendsWebTest {
     }
 
     @Test
-    @DisplayName("У пользователя есть заявка в друзья")
+    @DisplayName("У пользователя есть входящая заявка в друзья")
     void incomeInvitationBePresentInFriendsTable(@UserType(WITH_INCOME_REQUEST) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.password())
@@ -45,6 +45,7 @@ public class FriendsWebTest {
     }
 
     @Test
+    @DisplayName("У пользователя есть отправленная заявка в друзья")
     void outcomeInvitationBePresentInAllPeoplesTable(@UserType(WITH_OUTCOME_REQUEST) StaticUser user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.password())

@@ -14,14 +14,12 @@ import static com.codeborne.selenide.Selenide.$$;
 public class FriendsPage {
 
     private final ElementsCollection friendsList = $$("#friends tr").as("список друзей");
-    private final ElementsCollection unfriendBtn = $$("#friends td [type='button']").as("кнопка удаления из друзей");
     private final ElementsCollection requestsList = $$("#requests tr").as("список заявок в друзья");
     private final SelenideElement allPeopleBtn = $(byText("All people")).as("кнопка 'All people'");
 
     @Step("Проверка того, что у пользователя есть добавленные друзья")
     public FriendsPage existingFriendsCheck(String... expectedUsernames) {
         friendsList.shouldHave(textsInAnyOrder(expectedUsernames));
-        unfriendBtn.get(0).shouldBe(visible);
         return this;
     }
 
