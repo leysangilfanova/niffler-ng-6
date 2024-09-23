@@ -21,13 +21,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                     if (userAnno.categories().length > 0) {
                         Category anno = userAnno.categories()[0];
                         String categoryName;
-
-                        if (anno.title().isEmpty()) {
-                            categoryName = faker.animal().name();
-                        } else {
-                            categoryName = anno.title();
-                        }
-
+                        categoryName = anno.title().isEmpty() ? faker.animal().name() : anno.title();
                         CategoryJson category = new CategoryJson(
                                 null,
                                 categoryName,
