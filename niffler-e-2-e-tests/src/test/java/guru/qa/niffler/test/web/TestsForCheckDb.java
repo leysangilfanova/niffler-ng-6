@@ -2,12 +2,14 @@ package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.CategoryDbClient;
 import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WebTest
 public class TestsForCheckDb {
@@ -33,12 +36,12 @@ public class TestsForCheckDb {
                         new Date(),
                         new CategoryJson(null,
                                 RandomDataUtils.randomCategoryName(),
-                                "lissa",
+                                "missa",
                                 false),
                         CurrencyValues.RUB,
                         100.0,
                         "test desc",
-                        "lissa"
+                        "missa"
                 )
         );
         System.out.println(spend);
@@ -73,7 +76,7 @@ public class TestsForCheckDb {
     void deleteCategoryTest() {
         CategoryDbClient categoryDbClient = new CategoryDbClient();
         CategoryEntity categoryToDelete = new CategoryEntity();
-        categoryToDelete.setUsername("kisa");
+        categoryToDelete.setUsername("kissa");
         categoryToDelete.setName("testetst");
         categoryToDelete.setArchived(false);
 
@@ -96,7 +99,7 @@ public class TestsForCheckDb {
     void findAllSpendsByUsernameTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
         List<SpendEntity> spends = spendDbClient.findAllSpendsByUsername("lissa");
-        assertEquals(2, spends.size(), "Expected to find 2 spends for the user");
+        assertEquals(7, spends.size(), "Expected to find 7 spends for the user");
     }
 
     @Test
@@ -120,4 +123,60 @@ public class TestsForCheckDb {
         spendDbClient.deleteSpend(SpendEntity.fromJson(createdSpend));
     }
 
+    @Test
+    void createUserTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        UserEntity user = new UserEntity();
+        String userName = RandomDataUtils.randomUsername();
+        user.setUsername(userName);
+        user.setFirstname("Test");
+        user.setSurname("User");
+        user.setFullname("Test User");
+        user.setCurrency(CurrencyValues.USD);
+
+        UserEntity createdUser = userDbClient.createUser(user);
+
+        assertEquals(userName, createdUser.getUsername(), "Expected username to match");
+    }
+
+    @Test
+    void findUserByIdTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        UUID userId = UUID.fromString("2af3b94a-222e-4499-ac04-d4aa4047c0f0");
+
+        Optional<UserEntity> foundUser = userDbClient.findUserById(userId);
+
+        System.out.println(foundUser.get().getUsername());
+        assertTrue(foundUser.isPresent(), "Expected to find a user with given ID");
+        assertEquals(userId, foundUser.get().getId(), "Expected user ID to match");
+    }
+
+    @Test
+    void findUserByUsernameTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = "vito.satterfield";
+
+        Optional<UserEntity> foundUser = userDbClient.findUserByUsername(username);
+
+        System.out.println(foundUser.get().getId());
+        assertTrue(foundUser.isPresent(), "Expected to find a user with given username");
+        assertEquals(username, foundUser.get().getUsername(), "Expected username to match");
+    }
+
+    @Test
+    void deleteUserTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        UserEntity user = new UserEntity();
+        user.setUsername(RandomDataUtils.randomUsername());
+        user.setFirstname("Delete");
+        user.setSurname("User");
+        user.setFullname("Delete User");
+        user.setCurrency(CurrencyValues.EUR);
+
+        UserEntity createdUser = userDbClient.createUser(user);
+        userDbClient.deleteUser(createdUser);
+
+        Optional<UserEntity> deletedUser = userDbClient.findUserById(createdUser.getId());
+        assertFalse(deletedUser.isPresent(), "Expected user to be deleted");
+    }
 }
