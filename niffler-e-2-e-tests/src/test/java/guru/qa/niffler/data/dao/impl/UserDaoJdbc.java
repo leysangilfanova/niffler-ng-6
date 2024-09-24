@@ -16,34 +16,19 @@ import java.util.UUID;
 
 public class UserDaoJdbc implements UserDao {
     private static final Config CFG = Config.getInstance();
+    private static final String USER_TABLE = "\"user\"";
 
     @Override
     public UserEntity createUser(UserEntity user) {
-        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO \"user\" (username, firstname, surname, full_name, currency, photo, photo_small) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        String sql = String.format("INSERT INTO %s (username, firstname, surname, full_name, currency, photo, photo_small) VALUES (?, ?, ?, ?, ?, ?, ?)", USER_TABLE);
 
-                ps.setString(1, user.getUsername());
-                ps.setString(2, user.getFirstname());
-                ps.setString(3, user.getSurname());
-                ps.setString(4, user.getFullname());
-                ps.setString(5, user.getCurrency().name());
-                ps.setBytes(6, user.getPhoto());
-                ps.setBytes(7, user.getPhotoSmall());
+        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl());
+             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-                ps.executeUpdate();
-
-                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        user.setId(generatedKeys.getObject(1, UUID.class));
-                    } else {
-                        throw new SQLException("Creating user failed, no ID obtained.");
-                    }
-                }
-
-                return user;
-            }
+            setUserParameters(ps, user);
+            ps.executeUpdate();
+            user.setId(getGeneratedKey(ps));
+            return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -51,12 +36,12 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        return findUserByQuery("SELECT * FROM \"user\" WHERE id = ?", ps -> ps.setObject(1, id));
+        return findUserByQuery("SELECT * FROM " + USER_TABLE + " WHERE id = ?", ps -> ps.setObject(1, id));
     }
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        return findUserByQuery("SELECT * FROM \"user\" WHERE username = ?", ps -> ps.setString(1, username));
+        return findUserByQuery("SELECT * FROM " + USER_TABLE + " WHERE username = ?", ps -> ps.setString(1, username));
     }
 
     private Optional<UserEntity> findUserByQuery(String query, QueryParameterSetter setter) {
@@ -64,7 +49,6 @@ public class UserDaoJdbc implements UserDao {
              PreparedStatement ps = connection.prepareStatement(query)) {
 
             setter.setParameters(ps);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapResultSetToUserEntity(rs));
@@ -82,13 +66,12 @@ public class UserDaoJdbc implements UserDao {
     }
 
     public void deleteById(UUID id) {
-        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "DELETE FROM \"user\" WHERE id = ?")) {
+        String sql = String.format("DELETE FROM %s WHERE id = ?", USER_TABLE);
+        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl());
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
-                ps.setObject(1, id);
-                ps.executeUpdate();
-            }
+            ps.setObject(1, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -105,6 +88,26 @@ public class UserDaoJdbc implements UserDao {
         user.setPhoto(rs.getBytes("photo"));
         user.setPhotoSmall(rs.getBytes("photo_small"));
         return user;
+    }
+
+    private UUID getGeneratedKey(PreparedStatement ps) throws SQLException {
+        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                return generatedKeys.getObject(1, UUID.class);
+            } else {
+                throw new SQLException("Creating user failed, no ID obtained.");
+            }
+        }
+    }
+
+    private void setUserParameters(PreparedStatement ps, UserEntity user) throws SQLException {
+        ps.setString(1, user.getUsername());
+        ps.setString(2, user.getFirstname());
+        ps.setString(3, user.getSurname());
+        ps.setString(4, user.getFullname());
+        ps.setString(5, user.getCurrency().name());
+        ps.setBytes(6, user.getPhoto());
+        ps.setBytes(7, user.getPhotoSmall());
     }
 
     @FunctionalInterface

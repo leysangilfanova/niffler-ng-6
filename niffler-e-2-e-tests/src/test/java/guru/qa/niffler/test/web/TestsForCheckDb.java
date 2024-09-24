@@ -11,6 +11,7 @@ import guru.qa.niffler.service.CategoryDbClient;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WebTest
+@Disabled
 public class TestsForCheckDb {
 
     //Прошу это не проверять. Написано для себя, скорее всего удалю чуть позже

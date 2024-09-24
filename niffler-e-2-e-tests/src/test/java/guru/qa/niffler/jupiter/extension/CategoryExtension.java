@@ -20,30 +20,14 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                 .ifPresent(userAnno -> {
                     if (userAnno.categories().length > 0) {
                         Category anno = userAnno.categories()[0];
-                        String categoryName = getCategoryName(anno);
+                        String categoryName = anno.title().isEmpty() ? faker.animal().name() : anno.title();
 
-                        CategoryJson category = createCategoryJson(categoryName, userAnno.username(), false);
+                        CategoryJson category = new CategoryJson(null, categoryName, userAnno.username(), anno.archived());
                         CategoryJson createdCategory = categoryDbClient.createCategoryJson(category);
-
-                        if (anno.archived()) {
-                            createdCategory = updateCategoryArchivedStatus(createdCategory, true);
-                        }
 
                         context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
                     }
                 });
-    }
-
-    private String getCategoryName(Category anno) {
-        return anno.title().isEmpty() ? faker.animal().name() : anno.title();
-    }
-
-    private CategoryJson createCategoryJson(String name, String username, boolean archived) {
-        return new CategoryJson(null, name, username, archived);
-    }
-
-    private CategoryJson updateCategoryArchivedStatus(CategoryJson category, boolean archived) {
-        return new CategoryJson(category.id(), category.name(), category.username(), archived);
     }
 
     @Override
@@ -59,8 +43,8 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     @Override
     public void afterTestExecution(ExtensionContext context) {
         CategoryJson category = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-        if (category != null) {
-            CategoryJson updatedCategory = updateCategoryArchivedStatus(category, true);
+        if (category != null && !category.archived()) {
+            CategoryJson updatedCategory = new CategoryJson(category.id(), category.name(), category.username(), true);
             categoryDbClient.updateCategory(updatedCategory);
         }
     }
