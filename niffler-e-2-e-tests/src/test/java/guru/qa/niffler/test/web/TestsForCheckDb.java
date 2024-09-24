@@ -48,6 +48,14 @@ public class TestsForCheckDb {
     }
 
     @Test
+    void findCategoryByIdTest() {
+        CategoryDbClient categoryDbClient = new CategoryDbClient();
+        Optional<CategoryEntity> foundCategory = categoryDbClient.findCategoryById(UUID.fromString("c5718446-fdd1-48d7-9f6a-3aeea17808cf"));
+
+        System.out.println(foundCategory.get().getName());
+    }
+
+    @Test
     void findCategoryByUsernameAndCategoryNameTest() {
         CategoryDbClient categoryDbClient = new CategoryDbClient();
 

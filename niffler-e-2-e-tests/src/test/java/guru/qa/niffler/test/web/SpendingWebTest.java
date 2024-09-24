@@ -14,7 +14,7 @@ import static guru.qa.niffler.page.BaseTest.CFG;
 @WebTest
 public class SpendingWebTest {
     @User(
-            username = "kisa",
+            username = "kissa",
             spendings = @Spending(
                     category = "Обучение",
                     description = "Обучение Advanced 2.0",
@@ -27,7 +27,7 @@ public class SpendingWebTest {
         final String newDescription = "Обучение Niffler Next Generation";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("kisa", "kisa")
+                .login("kissa", "12345")
                 .editSpending(spend.description())
                 .setNewSpendingDescription(newDescription)
                 .save();
