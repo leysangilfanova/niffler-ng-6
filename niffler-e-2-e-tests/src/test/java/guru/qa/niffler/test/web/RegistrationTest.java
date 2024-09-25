@@ -13,7 +13,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 @WebTest
 public class RegistrationTest extends BaseTest {
 
-    private static final String password = RandomDataUtils.randomPassword();
+    private final String password = RandomDataUtils.randomPassword();
 
     @Test
     void shouldRegisterNewUser() {

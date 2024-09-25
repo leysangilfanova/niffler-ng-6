@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WebTest
 @Disabled
-public class TestsForCheckDb {
+public class CheckDbTest {
 
     //Прошу это не проверять. Написано для себя, скорее всего удалю чуть позже
     @Test

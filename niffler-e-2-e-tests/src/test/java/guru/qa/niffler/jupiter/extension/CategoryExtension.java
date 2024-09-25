@@ -1,6 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
 import com.github.javafaker.Faker;
+import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
@@ -44,8 +45,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     public void afterTestExecution(ExtensionContext context) {
         CategoryJson category = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
         if (category != null && !category.archived()) {
-            CategoryJson updatedCategory = new CategoryJson(category.id(), category.name(), category.username(), true);
-            categoryDbClient.updateCategory(updatedCategory);
+            categoryDbClient.deleteCategory(CategoryEntity.fromJson(category));
         }
     }
 }
