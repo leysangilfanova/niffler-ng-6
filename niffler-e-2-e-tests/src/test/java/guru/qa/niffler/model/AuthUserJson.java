@@ -1,7 +1,6 @@
 package guru.qa.niffler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,23 +23,5 @@ public record AuthUserJson(
         Boolean credentialsNonExpired,
         @JsonProperty("authorities")
         List<AuthorityJson> authorities) {
-
-    public static AuthUserJson fromEntity(AuthUserEntity entity) {
-        return new AuthUserJson(
-                entity.getId(),
-                entity.getUsername(),
-                entity.getPassword(),
-                entity.getEnabled(),
-                entity.getAccountNonExpired(),
-                entity.getAccountNonLocked(),
-                entity.getCredentialsNonExpired(),
-                entity.getAuthorities().stream()
-                        .map(authority -> new AuthorityJson(
-                                authority.getId(),
-                                authority.getAuthority().name()
-                        ))
-                        .toList()
-        );
-    }
 }
 

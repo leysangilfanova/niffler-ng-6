@@ -2,7 +2,11 @@ package guru.qa.niffler.data.dao;
 
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
-public interface AuthUserDao {
+import java.util.Optional;
+import java.util.UUID;
 
-    AuthUserEntity create(AuthUserEntity auth);
+public interface AuthUserDao {
+    AuthUserEntity create(AuthUserEntity user);
+
+    Optional<AuthUserEntity> findById(UUID id);
 }
