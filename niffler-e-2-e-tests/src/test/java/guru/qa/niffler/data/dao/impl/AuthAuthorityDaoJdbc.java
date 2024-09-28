@@ -7,10 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AuthorityDaoJdbc implements AuthAuthorityDao {
+public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     private final Connection connection;
 
-    public AuthorityDaoJdbc(Connection connection) {
+    public AuthAuthorityDaoJdbc(Connection connection) {
         this.connection = connection;
     }
 
