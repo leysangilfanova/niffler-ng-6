@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     private final DataSource dataSource;
@@ -42,5 +43,21 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     public List<AuthorityEntity> findAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         return jdbcTemplate.query("SELECT * FROM authority", AuthAuthorityRowMapper.instance);
+    }
+
+    @Override
+    public AuthorityEntity findById(UUID id) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM authority WHERE id = ?",
+                new Object[]{id},
+                AuthAuthorityRowMapper.instance
+        );
+    }
+
+    @Override
+    public void delete(UUID id) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.update("DELETE FROM authority WHERE id = ?", id);
     }
 }

@@ -93,4 +93,14 @@ public class AuthUserDaoJdbc implements AuthUserDao {
         }
         return users;
     }
+
+    @Override
+    public void delete(UUID id) {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" WHERE id = ?")) {
+            ps.setObject(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
