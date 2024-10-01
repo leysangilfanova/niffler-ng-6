@@ -16,8 +16,6 @@ import guru.qa.niffler.model.SpendJson;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static guru.qa.niffler.data.Databases.transaction;
-
 public class SpendDbClient {
 
     private static final Config CFG = Config.getInstance();
