@@ -6,16 +6,12 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersDbClient;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
-@Disabled
 public class JdbcTest {
 
     @Test
@@ -43,12 +39,12 @@ public class JdbcTest {
     }
 
     @Test
-    void xaTxTest() {
+    void springJdbcWithTransactionTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUser(
+        UserJson user = usersDbClient.createUserWithSpringJdbcTransaction(
                 new UserJson(
                         null,
-                        "valentin-4",
+                        "spring-with-tx",
                         null,
                         null,
                         null,
@@ -62,46 +58,59 @@ public class JdbcTest {
     }
 
     @Test
-    void testFindAllSpends() {
-        SpendDbClient spendDbClient = new SpendDbClient();
-
-        List<SpendJson> spends = spendDbClient.findAllSpends();
-
-        System.out.println(spends);
-        assertNotNull(spends, "Spends should not be null");
-        assertFalse(spends.isEmpty(), "Spends list should not be empty");
+    void springJdbcWithoutTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserWithoutSpringJdbcTransaction(
+                new UserJson(
+                        null,
+                        randomUsername(),
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
     }
 
     @Test
-    void testFindAllSpringSpends() {
-        SpendDbClient spendDbClient = new SpendDbClient();
-
-        List<SpendJson> spends = spendDbClient.findAllSpendsSpring();
-
-        System.out.println(spends);
-        assertNotNull(spends, "Spends should not be null");
-        assertFalse(spends.isEmpty(), "Spends list should not be empty");
+    void jdbcWithTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserWithJdbcTransaction(
+                new UserJson(
+                        null,
+                        "jdbc-with-wtx",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
     }
 
     @Test
-    void testFindAllCategories() {
-        SpendDbClient spendDbClient = new SpendDbClient();
-
-        List<CategoryJson> categories = spendDbClient.findAllCategories();
-
-        System.out.println(categories);
-        assertNotNull(categories, "Categories should not be null");
-        assertFalse(categories.isEmpty(), "Categories list should not be empty");
-    }
-
-    @Test
-    void testFindAllSpringCategories() {
-        SpendDbClient spendDbClient = new SpendDbClient();
-
-        List<CategoryJson> categories = spendDbClient.findAllCategoriesSpring();
-
-        System.out.println(categories);
-        assertNotNull(categories, "Categories should not be null");
-        assertFalse(categories.isEmpty(), "Categories list should not be empty");
+    void jdbcWithoutTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserWithoutJdbcTransaction(
+                new UserJson(
+                        null,
+                        randomUsername(),
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
     }
 }
