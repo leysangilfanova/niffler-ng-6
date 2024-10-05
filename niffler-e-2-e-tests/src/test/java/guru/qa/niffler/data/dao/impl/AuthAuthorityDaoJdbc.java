@@ -20,10 +20,9 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     @Override
     public void create(AuthorityEntity... authority) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)",
-                PreparedStatement.RETURN_GENERATED_KEYS)) {
+                "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)")) {
             for (AuthorityEntity a : authority) {
-                ps.setObject(1, a.getUserId());
+                ps.setObject(1, a.getUser().getId());
                 ps.setString(2, a.getAuthority().name());
                 ps.addBatch();
                 ps.clearParameters();
@@ -42,7 +41,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 AuthorityEntity authority = new AuthorityEntity();
-                authority.setUserId(rs.getObject("user_id", UUID.class));
+                authority.setId(rs.getObject("user_id", UUID.class));
                 authority.setAuthority(Authority.valueOf(rs.getString("authority")));
                 authorities.add(authority);
             }
@@ -62,7 +61,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                 if (rs.next()) {
                     authority = new AuthorityEntity();
                     authority.setId(rs.getObject("id", UUID.class));
-                    authority.setUserId(rs.getObject("user_id", UUID.class));
+                    authority.setId(rs.getObject("user_id", UUID.class));
                     authority.setAuthority(Authority.valueOf(rs.getString("authority")));
                 }
             }
