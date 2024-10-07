@@ -113,4 +113,68 @@ public class JdbcTest {
         );
         System.out.println(user);
     }
+
+    @Test
+    void addInvitationToFriendsTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson requesterUser = usersDbClient.createUserWithJdbcTransaction(
+                new UserJson(
+                        null,
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                ));
+
+        UserJson addresseeUser = usersDbClient.createUserWithJdbcTransaction(
+                new UserJson(
+                        null,
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                ));
+
+        usersDbClient.addInvitationToFriends(requesterUser, addresseeUser);
+    }
+
+    @Test
+    void addFriendTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson firstUser = usersDbClient.createUserWithJdbcTransaction(
+                new UserJson(
+                        null,
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                ));
+
+        UserJson secondUser = usersDbClient.createUserWithJdbcTransaction(
+                new UserJson(
+                        null,
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        randomUsername(),
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        null
+                ));
+
+        usersDbClient.addFriend(firstUser, secondUser);
+    }
 }
