@@ -78,17 +78,19 @@ public class UdUserRepositoryJdbc implements UdUserRepository {
     @Override
     public void addFriend(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement requesterPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "INSERT INTO friendship (requester_id, addressee_id, status) VALUES (?,?,?)");
+                "INSERT INTO friendship (requester_id, addressee_id, status, created_date) VALUES (?,?,?,?)");
              PreparedStatement addresseePs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                     "INSERT INTO friendship (requester_id, addressee_id, status) VALUES (?,?,?)")) {
+                     "INSERT INTO friendship (requester_id, addressee_id, status, created_date) VALUES (?,?,?,?)")) {
             requesterPs.setObject(1, requester.getId());
             requesterPs.setObject(2, addressee.getId());
             requesterPs.setString(3, FriendshipStatus.ACCEPTED.toString());
+            requesterPs.setDate(4, new java.sql.Date(System.currentTimeMillis()));
             requesterPs.executeUpdate();
 
             addresseePs.setObject(1, addressee.getId());
             addresseePs.setObject(2, requester.getId());
             addresseePs.setString(3, FriendshipStatus.ACCEPTED.toString());
+            requesterPs.setDate(4, new java.sql.Date(System.currentTimeMillis()));
             addresseePs.executeUpdate();
 
         } catch (SQLException e) {
@@ -97,12 +99,13 @@ public class UdUserRepositoryJdbc implements UdUserRepository {
     }
 
     @Override
-    public void addInvitationToFriends(UserEntity requester, UserEntity addressee) {
+    public void addInvitation(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement requesterPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "INSERT INTO friendship (requester_id, addressee_id, status) VALUES (?,?,?)")) {
+                "INSERT INTO friendship (requester_id, addressee_id, status, created_date) VALUES (?,?,?,?)")) {
             requesterPs.setObject(1, requester.getId());
             requesterPs.setObject(2, addressee.getId());
             requesterPs.setString(3, FriendshipStatus.PENDING.toString());
+            requesterPs.setDate(4, new java.sql.Date(System.currentTimeMillis()));
             requesterPs.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

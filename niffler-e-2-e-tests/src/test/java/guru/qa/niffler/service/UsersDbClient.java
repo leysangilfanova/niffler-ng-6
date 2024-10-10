@@ -144,7 +144,7 @@ public class UsersDbClient {
         udUserRepository.addFriend(UserEntity.fromJson(requester), UserEntity.fromJson(addressee));
     }
 
-    public void addInvitationToFriends(UserJson requester, UserJson addressee) {
-        udUserRepository.addInvitationToFriends(UserEntity.fromJson(requester), UserEntity.fromJson(addressee));
+    public void addInvitation(UserJson requester, UserJson addressee) {
+        udUserRepository.addInvitation(UserEntity.fromJson(requester), UserEntity.fromJson(addressee));
     }
 }

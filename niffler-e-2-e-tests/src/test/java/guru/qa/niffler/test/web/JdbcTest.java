@@ -143,7 +143,7 @@ public class JdbcTest {
                         null
                 ));
 
-        usersDbClient.addInvitationToFriends(requesterUser, addresseeUser);
+        usersDbClient.addInvitation(requesterUser, addresseeUser);
     }
 
     @Test
