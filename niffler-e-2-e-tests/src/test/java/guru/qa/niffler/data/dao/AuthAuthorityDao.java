@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AuthAuthorityDao {
+
     void create(AuthorityEntity... authority);
 
     List<AuthorityEntity> findAll();
 
-    AuthorityEntity findById(UUID id);
-
-    void delete(UUID id);
+    List<AuthorityEntity> findAllByUserId(UUID userId);
 }

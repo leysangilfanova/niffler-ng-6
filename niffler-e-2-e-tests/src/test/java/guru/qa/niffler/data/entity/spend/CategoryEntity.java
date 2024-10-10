@@ -34,6 +34,13 @@ public class CategoryEntity implements Serializable {
     @Column(nullable = false)
     private boolean archived;
 
+    public CategoryEntity(UUID id) {
+        this.id = id;
+    }
+
+    public CategoryEntity() {
+    }
+
     public static CategoryEntity fromJson(CategoryJson json) {
         CategoryEntity ce = new CategoryEntity();
         ce.setId(json.id());
@@ -59,4 +66,3 @@ public class CategoryEntity implements Serializable {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }
-
