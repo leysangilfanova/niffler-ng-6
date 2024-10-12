@@ -75,4 +75,18 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
                 )
         );
     }
+
+    @Override
+    public AuthUserEntity update(AuthUserEntity user) {
+        authUserDao.update(user);
+        authAuthorityDao.remove(user.getId());
+        authAuthorityDao.create(user.getAuthorities().toArray(new AuthorityEntity[0]));
+        return user;
+    }
+
+    @Override
+    public void remove(AuthUserEntity user) {
+        authAuthorityDao.remove(user.getId());
+        authUserDao.remove(user.getId());
+    }
 }
