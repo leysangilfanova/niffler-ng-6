@@ -49,7 +49,9 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     @Override
     public AuthUserEntity update(AuthUserEntity user) {
         authUserDao.update(user);
-        authAuthorityDao.update((AuthorityEntity) user.getAuthorities());
+        for (AuthorityEntity authority : user.getAuthorities()) {
+            authAuthorityDao.update(authority);
+        }
         return user;
     }
 
