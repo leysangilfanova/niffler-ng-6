@@ -4,36 +4,42 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.SpendClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpendApiClient {
+public class SpendApiClient implements SpendClient {
 
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Config.getInstance().spendUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private final SpendApi spendApi;
 
-    private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    public SpendApiClient() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Config.getInstance().spendUrl())
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build();
 
+        this.spendApi = retrofit.create(SpendApi.class);
+    }
+
+    @Override
     public SpendJson createSpend(SpendJson spend) {
-        final Response<SpendJson> response;
         try {
-            response = spendApi
-                    .addSpend(spend)
-                    .execute();
+            Response<SpendJson> response = spendApi.addSpend(spend).execute();
+            if (response.isSuccessful()) {
+                return response.body();
+            } else {
+                throw new RuntimeException("Failed to create spend: " + response.errorBody().string());
+            }
         } catch (IOException e) {
-            throw new AssertionError(e);
+            throw new RuntimeException("Error while creating spend", e);
         }
-        assertEquals(201, response.code());
-        return response.body();
     }
 
     public SpendJson editSpend(SpendJson spend) {
@@ -87,17 +93,18 @@ public class SpendApiClient {
         assertEquals(202, response.code());
     }
 
-    public CategoryJson addCategory(CategoryJson category) {
-        final Response<CategoryJson> response;
+    @Override
+    public CategoryJson createCategory(CategoryJson category) {
         try {
-            response = spendApi
-                    .addCategory(category)
-                    .execute();
+            Response<CategoryJson> response = spendApi.addCategory(category).execute();
+            if (response.isSuccessful()) {
+                return response.body();
+            } else {
+                throw new RuntimeException("Failed to create category: " + response.errorBody().string());
+            }
         } catch (IOException e) {
-            throw new AssertionError(e);
+            throw new RuntimeException("Error while creating category", e);
         }
-        assertEquals(200, response.code());
-        return response.body();
     }
 
     public CategoryJson updateCategory(CategoryJson category) {
@@ -125,5 +132,10 @@ public class SpendApiClient {
         }
         assertEquals(200, response.code());
         return response.body();
+    }
+
+    @Override
+    public void removeCategory(CategoryJson category) {
+        throw new UnsupportedOperationException("Deleting a category is not supported by API");
     }
 }

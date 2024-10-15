@@ -3,6 +3,7 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -17,6 +18,7 @@ public class MainPage {
     private final SelenideElement userMenuBtn = $("[aria-label='Menu']").as("кнопка открытия меню");
     private final SelenideElement profileBtn = $(byText("Profile")).as("кнопка открытия профиля");
     private final SelenideElement friendsBtn = $(byText("Friends")).as("кнопка открытия профиля");
+    private final SelenideElement searchInput =  $("input[type='text']").as("инпут поиска");
 
     @Step("Нажать на кнопку редактирования траты")
     public EditSpendingPage editSpending(String spendingDescription) {
@@ -26,6 +28,7 @@ public class MainPage {
 
     @Step("Проверка того, что в списке есть ожидаемая трата")
     public MainPage checkThatTableContainsSpending(String spendingDescription) {
+        makeSpendSearch(spendingDescription);
         tableRows.find(text(spendingDescription)).should(visible);
         return this;
     }
@@ -50,6 +53,13 @@ public class MainPage {
         userMenuBtn.click();
         friendsBtn.click();
         return new FriendsPage();
+    }
+
+    @Step("Осуществить поиск траты")
+    public MainPage makeSpendSearch(String spendingName) {
+        searchInput.sendKeys(spendingName);
+        searchInput.sendKeys(Keys.ENTER);
+        return new MainPage();
     }
 }
 
