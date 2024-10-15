@@ -4,7 +4,6 @@ import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import org.apache.commons.lang3.ArrayUtils;
@@ -44,7 +43,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                             user != null ? user.username() : userAnno.username(),
                                             false
                                     ),
-                                    CurrencyValues.RUB,
+                                    spendAnno.currency(),
                                     spendAnno.amount(),
                                     spendAnno.description(),
                                     user != null ? user.username() : userAnno.username()
@@ -74,6 +73,10 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
     @Override
     @SuppressWarnings("unchecked")
     public SpendJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return (SpendJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class).toArray();
+        List<SpendJson> spends = (List<SpendJson>) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class);
+        if (spends != null) {
+            return spends.toArray(new SpendJson[0]);
+        }
+        return new SpendJson[0];
     }
 }
