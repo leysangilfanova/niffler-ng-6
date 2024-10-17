@@ -5,33 +5,36 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record UserJson(
         @JsonProperty("id")
-        UUID id,
+        @Nullable UUID id,
         @JsonProperty("username")
-        String username,
+        @Nullable String username,
         @JsonProperty("firstname")
-        String firstname,
+        @Nullable String firstname,
         @JsonProperty("surname")
-        String surname,
+        @Nullable String surname,
         @JsonProperty("fullname")
-        String fullname,
+        @Nullable String fullname,
         @JsonProperty("currency")
-        CurrencyValues currency,
+        @Nullable CurrencyValues currency,
         @JsonProperty("photo")
-        String photo,
+        @Nullable String photo,
         @JsonProperty("photoSmall")
-        String photoSmall,
+        @Nullable String photoSmall,
         @JsonProperty("friendState")
-        FriendState friendState,
+        @Nullable FriendState friendState,
         @JsonIgnore
-        TestData testData) {
+        @Nullable TestData testData) {
 
-    public static UserJson fromEntity(UserEntity entity, FriendState friendState) {
+    @Nonnull
+    public static UserJson fromEntity(@Nonnull UserEntity entity, @Nullable FriendState friendState) {
         return new UserJson(
                 entity.getId(),
                 entity.getUsername(),
@@ -46,7 +49,8 @@ public record UserJson(
         );
     }
 
-    public UserJson addTestData(TestData testData) {
+    @Nonnull
+    public UserJson addTestData(@Nonnull TestData testData) {
         return new UserJson(
                 id, username, firstname, surname, fullname, currency, photo, photoSmall, friendState, testData
         );
