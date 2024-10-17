@@ -26,7 +26,7 @@ public class EditSpendingPage {
         return this;
     }
 
-    @Step("Установить стоимость траты")
+    @Step("Установить название категории")
     public EditSpendingPage setSpendingCategory(String category) {
         categoryInput.setValue(category);
         return this;
