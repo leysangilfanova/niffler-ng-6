@@ -15,6 +15,7 @@ import guru.qa.niffler.model.UserJson;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
@@ -34,7 +35,8 @@ public class UsersDbClient implements UsersClient {
     );
 
     @Override
-    public UserJson createUser(String username, String password) {
+    @Nonnull
+    public UserJson createUser(@Nonnull String username, @Nonnull String password) {
         return xaTransactionTemplate.execute(() -> UserJson.fromEntity(
                         createNewUser(username, password),
                         null
@@ -43,9 +45,9 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public void addIncomeInvitation(UserJson targetUser, int count) {
+    public void addIncomeInvitation(@Nonnull UserJson targetUser, int count) {
         if (count > 0) {
-            UserEntity targetEntity = userdataUserRepository.findById(
+            @Nonnull UserEntity targetEntity = userdataUserRepository.findById(
                     targetUser.id()
             ).orElseThrow();
 
@@ -64,9 +66,9 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public void addOutcomeInvitation(UserJson targetUser, int count) {
+    public void addOutcomeInvitation(@Nonnull UserJson targetUser, int count) {
         if (count > 0) {
-            UserEntity targetEntity = userdataUserRepository.findById(
+            @Nonnull UserEntity targetEntity = userdataUserRepository.findById(
                     targetUser.id()
             ).orElseThrow();
 
@@ -85,9 +87,9 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public void addFriend(UserJson targetUser, int count) {
+    public void addFriend(@Nonnull UserJson targetUser, int count) {
         if (count > 0) {
-            UserEntity targetEntity = userdataUserRepository.findById(
+            @Nonnull UserEntity targetEntity = userdataUserRepository.findById(
                     targetUser.id()
             ).orElseThrow();
 
@@ -105,20 +107,23 @@ public class UsersDbClient implements UsersClient {
         }
     }
 
-    private UserEntity createNewUser(String username, String password) {
-        AuthUserEntity authUser = authUserEntity(username, password);
+    @Nonnull
+    private UserEntity createNewUser(@Nonnull String username, @Nonnull String password) {
+        @Nonnull AuthUserEntity authUser = authUserEntity(username, password);
         authUserRepository.create(authUser);
         return userdataUserRepository.create(userEntity(username));
     }
 
-    private UserEntity userEntity(String username) {
+    @Nonnull
+    private UserEntity userEntity(@Nonnull String username) {
         UserEntity ue = new UserEntity();
         ue.setUsername(username);
         ue.setCurrency(CurrencyValues.RUB);
         return ue;
     }
 
-    private AuthUserEntity authUserEntity(String username, String password) {
+    @Nonnull
+    private AuthUserEntity authUserEntity(@Nonnull String username, @Nonnull String password) {
         AuthUserEntity authUser = new AuthUserEntity();
         authUser.setUsername(username);
         authUser.setPassword(pe.encode(password));

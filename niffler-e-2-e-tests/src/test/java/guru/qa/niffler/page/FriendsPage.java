@@ -16,6 +16,11 @@ public class FriendsPage {
     private final ElementsCollection friendsList = $$("#friends tr").as("список друзей");
     private final ElementsCollection requestsList = $$("#requests tr").as("список заявок в друзья");
     private final SelenideElement allPeopleBtn = $(byText("All people")).as("кнопка 'All people'");
+    private final SelenideElement acceptBtn = $(byText("Accept")).as("кнопка 'Accept'");
+    private final SelenideElement declineBtn = $(byText("Decline")).as("кнопка 'Decline'");
+    private final SelenideElement unfriendBtn = $(byText("Unfriend")).as("кнопка 'Unfriend'");
+    private final SelenideElement declineBtnInActionMenu =
+            $(".MuiDialogActions-spacing [type='button']:nth-child(2)").as("кнопка 'Decline' в диалоговом окне");
 
     @Step("Проверка того, что у пользователя есть добавленные друзья")
     public FriendsPage existingFriendsCheck(String... expectedUsernames) {
@@ -39,5 +44,24 @@ public class FriendsPage {
     public PeoplePage clickAllPeopleBtn() {
         allPeopleBtn.click();
         return new PeoplePage();
+    }
+
+    @Step("Принять заявку в друзья")
+    public FriendsPage acceptFriend() {
+        acceptBtn.click();
+        return this;
+    }
+
+    @Step("Отклонить заявку в друзья")
+    public FriendsPage declineFriend() {
+        declineBtn.click();
+        declineBtnInActionMenu.click();
+        return this;
+    }
+
+    @Step("Кнопка 'Unfriend' отображается")
+    public FriendsPage unfriendBtnIsVisibleCheck() {
+        unfriendBtn.shouldBe(visible);
+        return this;
     }
 }

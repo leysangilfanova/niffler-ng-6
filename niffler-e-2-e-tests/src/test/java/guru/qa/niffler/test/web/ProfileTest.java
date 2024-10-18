@@ -7,8 +7,14 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.BaseTest;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.service.UsersDbClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static guru.qa.niffler.utils.RandomDataUtils.randomName;
+import static guru.qa.niffler.utils.RandomDataUtils.randomPassword;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @WebTest
 public class ProfileTest extends BaseTest {
@@ -75,6 +81,24 @@ public class ProfileTest extends BaseTest {
                 .openProfile()
                 .clickArchiveSwitcher()
                 .categoryInListCheck(category.name());
+    }
+
+    @Test
+    @DisplayName("Проверка сохранения имени пользователя")
+    void setNameTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        String username = randomUsername();
+        String password = randomPassword();
+        String newName = randomName();
+
+        usersDbClient.createUser(username, password);
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(username, password);
+
+        new Header().toProfilePage()
+                .setName(newName)
+                .checkName(newName);
     }
 }
 
