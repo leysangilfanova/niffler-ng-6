@@ -69,7 +69,7 @@ public class ProfilePage {
 
     @Step("Сохранение имени пользователя")
     public ProfilePage setName(String name) {
-        nameInput.sendKeys(name);
+        nameInput.setValue(name);
         submitBtn.click();
         return this;
     }

@@ -22,7 +22,7 @@ public class PeoplePage {
 
     @Step("Осуществить поиск друга")
     private FriendsPage makeFriendSearch(String username) {
-        searchInput.sendKeys(username);
+        searchInput.setValue(username);
         searchInput.sendKeys(Keys.ENTER);
         return new FriendsPage();
     }

@@ -5,8 +5,8 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension.StaticUser;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType;
 import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.page.FriendsPage;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.service.UsersDbClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,7 +72,9 @@ public class FriendsWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password);
 
-        new Header().toFriendsPage()
+        new FriendsPage()
+                .getHeader()
+                .toFriendsPage()
                 .acceptFriend()
                 .unfriendBtnIsVisibleCheck();
     }
@@ -86,7 +88,9 @@ public class FriendsWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password);
 
-        new Header().toFriendsPage()
+        new FriendsPage()
+                .getHeader()
+                .toFriendsPage()
                 .declineFriend()
                 .noExistingFriendsCheck();
     }

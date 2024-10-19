@@ -18,7 +18,7 @@ public class MainPage {
     private final SelenideElement userMenuBtn = $("[aria-label='Menu']").as("кнопка открытия меню");
     private final SelenideElement profileBtn = $(byText("Profile")).as("кнопка открытия профиля");
     private final SelenideElement friendsBtn = $(byText("Friends")).as("кнопка открытия профиля");
-    private final SelenideElement searchInput =  $("input[type='text']").as("инпут поиска");
+    private final SelenideElement searchInput = $("input[type='text']").as("инпут поиска");
 
     @Step("Нажать на кнопку редактирования траты")
     public EditSpendingPage editSpending(String spendingDescription) {
@@ -57,7 +57,7 @@ public class MainPage {
 
     @Step("Осуществить поиск траты")
     public MainPage makeSpendSearch(String spendingName) {
-        searchInput.sendKeys(spendingName);
+        searchInput.setValue(spendingName);
         searchInput.sendKeys(Keys.ENTER);
         return new MainPage();
     }

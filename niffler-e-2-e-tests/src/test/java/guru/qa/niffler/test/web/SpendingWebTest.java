@@ -8,8 +8,6 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
-import guru.qa.niffler.page.component.Calendar;
-import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.page.component.SpendingTable;
 import guru.qa.niffler.service.UsersDbClient;
 import org.junit.jupiter.api.DisplayName;
@@ -84,12 +82,14 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(username, password);
 
-        new Header().addSpendingPage()
+        new EditSpendingPage()
+                .getHeader()
+                .addSpendingPage()
                 .setSpendingCategory("kokoko")
                 .setNewSpendingDescription("test")
-                .setSpendingAmount("10");
-
-        new Calendar().selectDateInCalendar("3.September.2015");
+                .setSpendingAmount("10")
+                .getCalendar()
+                .selectDateInCalendar("3.September.2015");
 
         new EditSpendingPage().save();
 

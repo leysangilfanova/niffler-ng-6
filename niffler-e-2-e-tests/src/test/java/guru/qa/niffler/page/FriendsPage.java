@@ -3,15 +3,15 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.textsInAnyOrder;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class FriendsPage {
+public class FriendsPage extends BaseTest{
 
     private final ElementsCollection friendsList = $$("#friends tr").as("список друзей");
     private final ElementsCollection requestsList = $$("#requests tr").as("список заявок в друзья");
@@ -51,8 +51,7 @@ public class FriendsPage {
 
     @Step("Осуществить поиск друга")
     public FriendsPage makeFriendSearch(String friendName) {
-        searchInput.sendKeys(friendName);
-        searchInput.sendKeys(Keys.ENTER);
+        searchField.search(friendName);
         return new FriendsPage();
     }
 

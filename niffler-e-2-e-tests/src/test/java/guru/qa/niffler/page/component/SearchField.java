@@ -12,13 +12,13 @@ public class SearchField {
 
     @Step("Осуществить поиск")
     public SearchField search(String query) {
-        searchInput.sendKeys(query);
+        searchInput.setValue(query);
         searchInput.sendKeys(Keys.ENTER);
         return this;
     }
 
     @Step("Очистить строку поиска")
-    public SearchField clearIfNotEmpty() {
+    public SearchField clear() {
         searchInput.clear();
         return this;
     }
