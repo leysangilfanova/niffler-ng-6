@@ -25,7 +25,7 @@ public class SpendApiClient implements SpendClient {
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
 
-        this.spendApi = retrofit.create(SpendApi.class);
+        spendApi = retrofit.create(SpendApi.class);
     }
 
     @Override
