@@ -4,101 +4,132 @@ import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.page.BaseTest;
-import guru.qa.niffler.page.component.Header;
-import guru.qa.niffler.service.UsersDbClient;
-import org.junit.jupiter.api.DisplayName;
+import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
 
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
-import static guru.qa.niffler.utils.RandomDataUtils.randomPassword;
-import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @WebTest
-public class ProfileTest extends BaseTest {
-    String userData = "kisa";
+public class ProfileTest {
 
-    @Test
-    @DisplayName("После удачной авторизации показывается главная страница")
-    void mainPageShouldBeDisplayedAfterSuccessLogin() {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(userData, userData)
-                .mainPageAfterLoginCheck();
-    }
+  @User(
+      categories = @Category(
+          archived = true
+      )
+  )
+  @Test
+  void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
+    final String categoryName = user.testData().categoryDescriptions()[0];
 
-    @Test
-    @DisplayName("После неудачной авторизации показывается ошибка")
-    void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .auth(userData, "kiss")
-                .loginErrorCheck("Bad credentials");
-    }
+    Selenide.open(LoginPage.URL, LoginPage.class)
+        .fillLoginPage(user.username(), user.testData().password())
+        .submit(new MainPage())
+        .checkThatPageLoaded();
 
-    @DisplayName("Архивация категории")
-    @User(username = "risa", categories = @Category(archived = false))
-    @Test
-    void archivingCategoryTest(CategoryJson category) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("risa", "risa")
-                .openProfile()
-                .clickArchiveButton()
-                .confirmArchiving()
-                .successArchiveTooltipCheck("Category " + category.name() + " is archived");
-    }
+    Selenide.open(ProfilePage.URL, ProfilePage.class)
+        .checkArchivedCategoryExists(categoryName);
+  }
 
-    @DisplayName("Разархивация категории")
-    @User(username = "misa", categories = @Category(archived = true))
-    @Test
-    void unArchivingCategoryTest(CategoryJson category) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("misa", "misa")
-                .openProfile()
-                .clickArchiveSwitcher()
-                .categoryInListCheck(category.name())
-                .clickUnArchiveButton()
-                .confirmArchiving()
-                .categoryNotInListCheck(category.name());
-    }
+  @User(
+      categories = @Category(
+          archived = false
+      )
+  )
+  @Test
+  void activeCategoryShouldPresentInCategoriesList(UserJson user) {
+    final String categoryName = user.testData().categoryDescriptions()[0];
 
-    @DisplayName("Активная категория отображается в списке активных категорий")
-    @User(username = "nisa", categories = @Category(archived = false))
-    @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("nisa", "nisa")
-                .openProfile()
-                .categoryInListCheck(category.name());
-    }
+    Selenide.open(LoginPage.URL, LoginPage.class)
+        .fillLoginPage(user.username(), user.testData().password())
+        .submit(new MainPage())
+        .checkThatPageLoaded();
 
-    @User(username = "lisa", categories = @Category(archived = true))
-    @Test
-    @DisplayName("Архивная категория отображается в списке архивных категорий")
-    void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("lisa", "lisa")
-                .openProfile()
-                .clickArchiveSwitcher()
-                .categoryInListCheck(category.name());
-    }
+    Selenide.open(ProfilePage.URL, ProfilePage.class)
+        .checkCategoryExists(categoryName);
+  }
 
-    @Test
-    @DisplayName("Проверка сохранения имени пользователя")
-    void setNameTest() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        String username = randomUsername();
-        String password = randomPassword();
-        String newName = randomName();
+  @User
+  @Test
+  void shouldUpdateProfileWithAllFieldsSet(UserJson user) {
+    final String newName = randomName();
 
-        usersDbClient.createUser(username, password);
+    ProfilePage profilePage = Selenide.open(LoginPage.URL, LoginPage.class)
+        .fillLoginPage(user.username(), user.testData().password())
+        .submit(new MainPage())
+        .checkThatPageLoaded()
+        .getHeader()
+        .toProfilePage()
+        .uploadPhotoFromClasspath("img/cat.jpeg")
+        .setName(newName)
+        .submitProfile()
+        .checkAlertMessage("Profile successfully updated");
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(username, password);
+    Selenide.refresh();
 
-        new Header().toProfilePage()
-                .setName(newName)
-                .checkName(newName);
-    }
+    profilePage.checkName(newName)
+        .checkPhotoExist();
+  }
+
+  @User
+  @Test
+  void shouldUpdateProfileWithOnlyRequiredFields(UserJson user) {
+    final String newName = randomName();
+
+    ProfilePage profilePage = Selenide.open(LoginPage.URL, LoginPage.class)
+        .fillLoginPage(user.username(), user.testData().password())
+        .submit(new MainPage())
+        .checkThatPageLoaded()
+        .getHeader()
+        .toProfilePage()
+        .setName(newName)
+        .submitProfile()
+        .checkAlertMessage("Profile successfully updated");
+
+    Selenide.refresh();
+
+    profilePage.checkName(newName);
+  }
+
+  @User
+  @Test
+  void shouldAddNewCategory(UserJson user) {
+    String newCategory = randomCategoryName();
+
+    Selenide.open(LoginPage.URL, LoginPage.class)
+        .fillLoginPage(user.username(), user.testData().password())
+        .submit(new MainPage())
+        .checkThatPageLoaded()
+        .getHeader()
+        .toProfilePage()
+        .addCategory(newCategory)
+        .checkAlertMessage("You've added new category:")
+        .checkCategoryExists(newCategory);
+  }
+
+  @User(
+      categories = {
+          @Category(name = "Food"),
+          @Category(name = "Bars"),
+          @Category(name = "Clothes"),
+          @Category(name = "Friends"),
+          @Category(name = "Music"),
+          @Category(name = "Sports"),
+          @Category(name = "Walks"),
+          @Category(name = "Books")
+      }
+  )
+  @Test
+  void shouldForbidAddingMoreThat8Categories(UserJson user) {
+    Selenide.open(LoginPage.URL, LoginPage.class)
+        .fillLoginPage(user.username(), user.testData().password())
+        .submit(new MainPage())
+        .checkThatPageLoaded()
+        .getHeader()
+        .toProfilePage()
+        .checkThatCategoryInputDisabled();
+  }
 }
-

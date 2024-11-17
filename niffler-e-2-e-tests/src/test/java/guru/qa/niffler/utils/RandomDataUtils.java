@@ -2,33 +2,34 @@ package guru.qa.niffler.utils;
 
 import com.github.javafaker.Faker;
 
+import javax.annotation.Nonnull;
+
 public class RandomDataUtils {
-    private static final Faker faker = new Faker();
 
-    public static String randomUsername() {
-        return faker.name().username();
-    }
+  private static final Faker faker = new Faker();
 
-    public static String randomName() {
-        return faker.name().firstName();
-    }
+  @Nonnull
+  public static String randomUsername() {
+    return faker.name().username();
+  }
 
-    public static String randomSurname() {
-        return faker.name().lastName();
-    }
+  @Nonnull
+  public static String randomName() {
+    return faker.name().firstName();
+  }
 
-    public static String randomCategoryName() {
-        return faker.animal().name();
-    }
+  @Nonnull
+  public static String randomSurname() {
+    return faker.name().lastName();
+  }
 
-    public static String randomSentence(int wordsCount) {
-        String firstWord = faker.gameOfThrones().character();
-        String secondWord = faker.relationships().any();
-        String thirdWord = faker.harryPotter().character();
-        return firstWord + "is" + secondWord + "of" + thirdWord;
-    }
+  @Nonnull
+  public static String randomCategoryName() {
+    return faker.food().fruit();
+  }
 
-    public static String randomPassword() {
-        return faker.internet().password(3, 12);
-    }
+  @Nonnull
+  public static String randomSentence(int wordsCount) {
+    return faker.lorem().sentence(wordsCount);
+  }
 }
